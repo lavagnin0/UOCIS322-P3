@@ -87,7 +87,7 @@ def check():
     app.logger.debug("Entering check")
 
     # The data we need, from form and from cookie
-    text = flask.request.form["attempt"]
+    text = flask.request.args.get("txt", type=str)
     jumble = flask.session["jumble"]
     matches = flask.session.get("matches", [])  # Default to empty list
 
@@ -100,23 +100,21 @@ def check():
         # Cool, they found a new word
         matches.append(text)
         flask.session["matches"] = matches
+        result = "SUCCESS"
     elif text in matches:
-        flask.flash("You already found {}".format(text))
+        result = "ALREADY_FOUND"
     elif not matched:
-        flask.flash("{} isn't in the list of words".format(text))
+        result = "NOT_MATCHED"
     elif not in_jumble:
-        flask.flash(
-            '"{}" can\'t be made from the letters {}'.format(text, jumble))
+        result = "BAD_INPUT"
     else:
         app.logger.debug("This case shouldn't happen!")
         assert False  # Raises AssertionError
 
-    # Choose page:  Solved enough, or keep going?
     if len(matches) >= flask.session["target_count"]:
-       return flask.redirect(flask.url_for("success"))
-    else:
-       return flask.redirect(flask.url_for("keep_going"))
+        result = "FINISHED"
 
+    return flask.jsonify(status=result)
 
 ###############
 # AJAX request handlers
