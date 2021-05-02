@@ -74,7 +74,7 @@ def success():
 #   a JSON request handler
 #######################
 
-@app.route("/_check", methods=["POST"])
+@app.route("/_check")
 def check():
     """
     User has submitted the form with a word ('attempt')
@@ -87,7 +87,7 @@ def check():
     app.logger.debug("Entering check")
 
     # The data we need, from form and from cookie
-    text = flask.request.args.get("txt", type=str)
+    text = flask.request.args.get("text", type=str)
     jumble = flask.session["jumble"]
     matches = flask.session.get("matches", [])  # Default to empty list
 
@@ -100,21 +100,22 @@ def check():
         # Cool, they found a new word
         matches.append(text)
         flask.session["matches"] = matches
-        result = "SUCCESS"
+        status = "SUCCESS"
     elif text in matches:
-        result = "ALREADY_FOUND"
+        status = "ALREADY_FOUND"
     elif not matched:
-        result = "NOT_MATCHED"
+        status = "NOT_MATCHED"
     elif not in_jumble:
-        result = "BAD_INPUT"
+        status = "BAD_INPUT"
     else:
         app.logger.debug("This case shouldn't happen!")
         assert False  # Raises AssertionError
 
     if len(matches) >= flask.session["target_count"]:
-        result = "FINISHED"
+        status = "FINISHED"
 
-    return flask.jsonify(status=result)
+    rslt = {"status": status, "matches": matches}
+    return flask.jsonify(result=rslt)
 
 ###############
 # AJAX request handlers
