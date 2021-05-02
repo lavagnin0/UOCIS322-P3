@@ -107,18 +107,19 @@
                             status = data.result.status;
 							matches = data.result.matches;
                             console.log("status: " + status);
+							$("#response").html("");
 							if (matches.length > 0) {
-								$("#response").html("<h2>You found:</h2>");
+								$("#response").append("<h2>You found:</h2>");
 								for (var i=0; i < matches.length; i++) {
 									$("#response").append("<p>"+ matches[i] +"</p>");
-									$('#' + matches[i]).prepend("<s>");
-									$('#' + matches[i]).append("</s>");
+									$('#' + matches[i]).css({"text-decoration": "overline"});
 								}
 							}
 							$("#response").html()
                             switch (status) {
 								case "SUCCESS":
 									$("#response").append("<p>You found " + txt + "</p>");
+									$("#attempt").val("");
 									break;
 								case "ALREADY_FOUND":
 									$("#response").append("<p>" +txt+" isn't in the list of words </p>");
