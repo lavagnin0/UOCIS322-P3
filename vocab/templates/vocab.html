@@ -82,6 +82,7 @@
          </div>
          <br />
 		 <p id="response"> </p>
+		 <p id="found"> </p>
       </div>
 	  <script>
             // Suppress normal form submission
@@ -108,14 +109,15 @@
 							matches = data.result.matches;
                             console.log("status: " + status);
 							$("#response").html("");
+							$("#found").html("<h2>You found:</h2>");
 							if (matches.length > 0) {
-								$("#response").append("<h2>You found:</h2>");
 								for (var i=0; i < matches.length; i++) {
-									$("#response").append("<p>"+ matches[i] +"</p>");
+									$("#found").append("<p>"+ matches[i] +"</p>");
 									$('#' + matches[i]).css({"text-decoration": "line-through"});
 								}
+							} else {
+								$("#found").append("<p>No matches yet!<p>");
 							}
-							$("#response").html()
                             switch (status) {
 								case "SUCCESS":
 									$("#response").append("<p>You found " + txt + "</p>");
