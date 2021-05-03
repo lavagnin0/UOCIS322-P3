@@ -52,22 +52,6 @@ def index():
     app.logger.debug("At least one seems to be set correctly")
     return flask.render_template('vocab.html')
 
-
-@app.route("/keep_going")
-def keep_going():
-    """
-    After initial use of index, we keep the same scrambled
-    word and try to get more matches
-    """
-    flask.g.vocab = WORDS.as_list()
-    return flask.render_template('vocab.html')
-
-
-@app.route("/success")
-def success():
-    return flask.render_template('success.html')
-
-
 #######################
 # Form handler.
 #   You'll need to change this to a
@@ -87,7 +71,7 @@ def check():
     app.logger.debug("Entering check")
 
     # The data we need, from form and from cookie
-    text = request.args.get("text", type=str)
+    text = flask.request.args.get("text", type=str)
     jumble = flask.session["jumble"]
     matches = flask.session.get("matches", [])  # Default to empty list
 
